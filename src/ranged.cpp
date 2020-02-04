@@ -1475,10 +1475,10 @@ static int print_ranged_chance( const player &p, const catacurses::window &w, in
                                                hotkey, label, aim_l, moves_to_fire ) );
         if( panel_type == "compact" || panel_type == "labels-narrow" ) {
             print_colored_text( w, point( 1, line_number++ ), col, col,
-                                string_format( _( "<color_white>[%s]</color> %s: Moves to fire\u02EF"
-                                                  "\n                              "
-                                                  "<color_light_blue>%d</color>" ),
-                                               hotkey, label, moves_to_fire ) );
+                                string_format( _( "<color_white>[%s]</color> %s: Moves to fire\u02EF" ),
+                                               hotkey, label ) );
+            right_print( w, line_number, 1, c_light_blue, string_format( _( "%d" ),
+                         moves_to_fire ) );
         } else {
             print_colored_text( w, point( 1, line_number++ ), col, col,
                                 string_format( _( "<color_white>[%s]</color> %s: Moves to fire:"
