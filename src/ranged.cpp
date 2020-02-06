@@ -1443,12 +1443,25 @@ static int print_ranged_chance( const player &p, const catacurses::window &w, in
             // If exceeds window width, increments line number.
             len += ( utf8_width( symbols ) - ( 3 * 16 ) - c_len );
             if( len > window_width + bars_pad ) {
+        int column_number = 1;
+        if( !( panel_type == "compact" || panel_type == "labels-narrow" ) ) {
+            auto label = gettext( "Symbols:" );
+            mvwprintw( w, point( column_number, line_number ), label );
+            column_number += strlen( label ) + 1; // 1 for whitespace after 'Symbols:'
+        }
+        for( const confidence_rating &cr : confidence_config ) {
+            auto label = pgettext( "aim_confidence", cr.label.c_str() );
+            std::string symbols = string_format( "<color_%s>%s</color> = %s", cr.color, cr.symbol,
+                                                 label );
+            int line_len = utf8_width( label ) + 5; // 5 for '# = ' and whitespace at end
+            if( ( window_width + bars_pad - column_number ) < line_len ) {
+                column_number = 1;
                 line_number++;
             }
-        } else {
-            print_colored_text( w, point( 1, line_number++ ), col, col, string_format(
-                                    _( "Symbols: %s" ), symbols ) );
+            print_colored_text( w, point( column_number, line_number ), col, col, symbols );
+            column_number += line_len;
         }
+        line_number++;
     }
 
     const auto front_or = [&]( const std::string & s, const char fallback ) {
