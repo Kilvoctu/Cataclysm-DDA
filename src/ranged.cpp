@@ -1397,7 +1397,7 @@ static int print_ranged_chance( const player &p, const catacurses::window &w, in
         window_width -= bars_pad;
     if( panel_type == "compact" || panel_type == "labels-narrow" ) {
     if( ( panel_type == "compact" || panel_type == "labels-narrow" ) && display_type != "numbers" ) {
-        window_width -= 3; // Padding for "bars" to fit moves_to_fire value.
+        window_width -= bars_pad;
     }
 
     nc_color col = c_dark_gray;
@@ -1428,14 +1428,26 @@ static int print_ranged_chance( const player &p, const catacurses::window &w, in
             }
             print_colored_text( w, point( column_number, line_number ), col, col, symbols );
             column_number += line_len;
+        int len = 0;
+        int c_len = 0;
+        for( const confidence_rating &cr : confidence_config ) {
+            symbols += string_format( "<color_%s>%s</color> = %s ", cr.color, cr.symbol,
+                                      pgettext( "aim_confidence", cr.label.c_str() ) );
+            c_len += cr.color.length();
         }
         line_number++;
         if( panel_type == "compact" || panel_type == "labels-narrow" ) {
-            print_colored_text( w, point( 1, line_number++ ), col, col, string_format(
-                                    ( "%s" ), symbols ) );
+            fold_and_print( w, point( 1, line_number++ ), window_width + bars_pad,
+                            c_dark_gray, symbols );
+            // Determine length of string, subtracting color code.
+            // If exceeds window width, increments line number.
+            len += ( utf8_width( symbols ) - ( 3 * 16 ) - c_len );
+            if( len > window_width + bars_pad ) {
+                line_number++;
+            }
         } else {
             print_colored_text( w, point( 1, line_number++ ), col, col, string_format(
-                                    _( "Symbols:%s" ), symbols ) );
+                                    _( "Symbols: %s" ), symbols ) );
         }
     }
 
@@ -1484,9 +1496,9 @@ static int print_ranged_chance( const player &p, const catacurses::window &w, in
             right_print( w, line_number, 1, c_light_blue, string_format( ( "%d" ), moves_to_fire ) );
         } else {
             print_colored_text( w, point( 1, line_number++ ), col, col,
-                                string_format( _( "<color_white>[%s]</color> %s: Moves to fire: "
+                                string_format( _( "<color_white>[%s]</color> %s %s: Moves to fire: "
                                                   "<color_light_blue>%d</color>" ),
-                                               hotkey, label, moves_to_fire ) );
+                                               hotkey, label, aim_l, moves_to_fire ) );
         }
 
         double confidence = confidence_estimate( range, target_size, current_dispersion );
