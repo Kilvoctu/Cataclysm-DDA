@@ -19,6 +19,7 @@
 #include "cuboid_rectangle.h"
 #include "cursesdef.h"
 #include "game.h"
+#include "gpkey.h"
 #include "help.h"
 #include "input.h"
 #include "map.h"
@@ -306,7 +307,7 @@ std::string input_context::get_desc( const std::string &action_descriptor,
     const std::string separator = inputs_to_show.size() > 2 ? _( ", or " ) : _( " or " );
     std::string rval;
     for( size_t i = 0; i < inputs_to_show.size(); ++i ) {
-        rval += inputs_to_show[i].long_description();
+        rval += convert_to_gamepad( inputs_to_show[i].long_description() );
 
         // We're generating a list separated by "," and "or"
         if( i + 2 == inputs_to_show.size() ) {
@@ -660,7 +661,7 @@ const
 // alternative hotkeys, which mustn't be included so that the hardcoded
 // hotkeys do not show up beside entries within the window.
 static const std::string display_help_hotkeys =
-    "abcdefghijkpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:;'\",/<>?!@#$%^&*()_[]\\{}|`~";
+    "0123456789abcdefghijkpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:;'\",/<>?!@#$%^&*()_[]\\{}|`~";
 
 namespace
 {
@@ -1309,7 +1310,7 @@ std::string input_context::press_x( const std::string &action_id,
     const std::string separator = _( " or " );
     std::string keyed = key_bound_pre;
     for( size_t j = 0; j < events.size(); j++ ) {
-        keyed += events[j].long_description();
+        keyed += convert_to_gamepad( events[j].long_description() );
 
         if( j + 1 < events.size() ) {
             keyed += separator;
