@@ -1139,12 +1139,11 @@ static void draw_om_sidebar( ui_adaptor &ui,
     wattroff( wbar, c_white );
 
     wattron( wbar, c_magenta );
-    mvwprintw( wbar, point( 1, 12 ), _( "Use movement keys to pan." ) );
-    mvwprintw( wbar, point( 1, 13 ), _( string_format( "Press %s to preview route.",
+    mvwprintw( wbar, point( 1, 6 ), _( "Use D-pad to pan." ) );
+    mvwprintw( wbar, point( 1, 7 ), _( string_format( "%s - Preview/confirm route",
                                         inp_ctxt.get_desc( "CHOOSE_DESTINATION" ) ) ) );
-    mvwprintw( wbar, point( 1, 14 ), _( "Press again to confirm." ) );
     wattroff( wbar, c_magenta );
-    int y = 16;
+    int y = 9;
 
     const auto print_hint = [&]( const std::string & action, nc_color color = c_magenta ) {
         y += fold_and_print( wbar, point( 1, y ), getmaxx( wbar ) - 1, color, string_format( _( "%s - %s" ),
@@ -1323,7 +1322,7 @@ static bool search( const ui_adaptor &om_ui, tripoint_abs_omt &curs, const tripo
                        .title( _( "Search term:" ) )
                        .description( string_format( "%s\n%s",
                                      _( "Multiple entries separated with comma (,). Excludes starting with hyphen (-)." ),
-                                     colorize( _( "UP: history, CTRL-U: clear line, ESC: abort, ENTER: save" ), c_green ) ) )
+                                     colorize( _( "UP: History, ESC: Abort, ENTER: Save" ), c_green ) ) )
                        .desc_color( c_white )
                        .identifier( "overmap_search" )
                        .query_string();

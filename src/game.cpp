@@ -6790,45 +6790,33 @@ static void zones_manager_shortcuts( const catacurses::window &w_info, faction_i
     werase( w_info );
 
     int tmpx = 1;
-    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<A>dd" ) ) + 2;
-    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<P>ersonal" ) ) + 2;
-    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<R>emove" ) ) + 2;
-    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<E>nable" ) ) + 2;
-    shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<D>isable" ) );
+    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<X>-Add" ) ) + 2;
+    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<Y>-Personal" ) ) + 2;
+    tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<L1+X>-Remove" ) ) + 2;
+
+	tmpx = 1;
+    tmpx += shortcut_print( w_info, point( tmpx, 2 ), c_white, c_light_green, _( "<R1>-Enable" ) ) + 2;
+    shortcut_print( w_info, point( tmpx, 2 ), c_white, c_light_green, _( "<L1+R1>-Disable" ) );
 
     tmpx = 1;
-    shortcut_print( w_info, point( tmpx, 2 ), c_white, c_light_green,
-                    _( "<T>-Toggle zone display" ) );
-
     tmpx += shortcut_print( w_info, point( tmpx, 3 ), c_white, c_light_green,
-                            _( "<Z>-Enable personal" ) ) + 2;
+                            _( "<L1+Y>-Enable Personal" ) ) + 1;
     shortcut_print( w_info, point( tmpx, 3 ), c_white, c_light_green,
-                    _( "<X>-Disable personal" ) );
+                    _( "<L2+Y>-Disable Personal" ) );
 
     tmpx = 1;
-    tmpx += shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green,
-                            _( "<+-> Move up/down" ) ) + 2;
-    shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green, _( "<Enter>-Edit" ) );
+    tmpx += shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green, 
+	                        _( "<R3>-Toggle Zone Display" ) ) + 2;
+	shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green,
+                    _( "<L3>-Show all" ) );
 
     tmpx = 1;
-    std::string all_zones = _( "<S>how all" );
-    std::string distant_zones = _( "Hide distant" );
-    std::array<nc_color, 2> selection_color = { c_dark_gray, c_dark_gray };
-    selection_color[int( !show_all_zones )] = c_yellow;
-
-    nc_color current_color = selection_color[0];
-    tmpx += shortcut_print( w_info, point( tmpx, 5 ), current_color, c_light_green, all_zones );
-    current_color = c_white;
-    print_colored_text( w_info, point( tmpx, 5 ), current_color, current_color, " / " );
-    tmpx += 3;
-    current_color = selection_color[1];
-    print_colored_text( w_info, point( tmpx, 5 ), current_color, current_color, distant_zones );
-    tmpx += utf8_width( distant_zones ) + 2;
-
-    shortcut_print( w_info, point( tmpx, 5 ), c_white, c_light_green, _( "<M>ap" ) );
+    tmpx += shortcut_print( w_info, point( tmpx, 5 ), c_white, c_light_green,
+                            _( "<R\u25CE\u2191\u2193>-Move up/down" ) ) + 2;
+    shortcut_print( w_info, point( tmpx, 5 ), c_white, c_light_green, _( "<A>-Edit" ) );
 
     if( debug_mode ) {
-        shortcut_print( w_info, point( 1, 6 ), c_light_red, c_light_green,
+        shortcut_print( w_info, point( 1, 8 ), c_light_red, c_light_green,
                         string_format( _( "Shown <F>action: %s" ), faction.str() ) );
     }
 
@@ -8238,16 +8226,16 @@ void game::reset_item_list_state( const catacurses::window &window, int height, 
     mvwaddch( window, point( width - 1, TERMY - height - 1 ), LINE_XOXX ); // -|
     wattroff( window, c_light_gray );
 
-    mvwprintz( window, point( 2, 0 ), c_light_green, "<Tab> " );
+    mvwprintz( window, point( 2, 0 ), c_light_green, "R\u25CE\u2190 " );
     wprintz( window, c_white, _( "Items" ) );
 
     std::string sSort;
     if( bRadiusSort ) {
         //~ Sort type: distance.
-        sSort = _( "<s>ort: dist" );
+        sSort = _( "L3: Distance" );
     } else {
         //~ Sort type: category.
-        sSort = _( "<s>ort: cat" );
+        sSort = _( "L3: Category" );
     }
 
     int letters = utf8_width( sSort );
@@ -8257,14 +8245,12 @@ void game::reset_item_list_state( const catacurses::window &window, int height, 
     std::vector<std::string> tokens;
     tokens.reserve( 5 + ( !sFilter.empty() ? 1 : 0 ) );
     if( !sFilter.empty() ) {
-        tokens.emplace_back( _( "<R>eset" ) );
+        tokens.emplace_back( _( "<R3>-Reset" ) );
     }
 
-    tokens.emplace_back( _( "<E>xamine" ) );
-    tokens.emplace_back( _( "<C>ompare" ) );
-    tokens.emplace_back( _( "<F>ilter" ) );
-    tokens.emplace_back( _( "<+/->Priority" ) );
-    tokens.emplace_back( _( "<T>ravel to" ) );
+    tokens.emplace_back( _( "<X>-Examine" ) );
+    tokens.emplace_back( _( "<Y>-Compare" ) );
+    tokens.emplace_back( _( "<A>-Travel to" ) );
 
     int gaps = tokens.size() + 1;
     letters = 0;
@@ -8337,7 +8323,7 @@ void game::list_items_monsters()
 
 static std::string list_items_filter_history_help()
 {
-    return colorize( _( "UP: history, CTRL-U: clear line, ESC: abort, ENTER: save" ), c_green );
+    return colorize( _( "UP: History, ESC: Abort, ENTER: Save" ), c_green );
 }
 
 /// return content_newness based on if item is known and nested items are known
@@ -8971,7 +8957,7 @@ game::vmenu_ret game::list_monsters( const std::vector<Creature *> &monster_list
             draw_custom_border( w_monsters_border, 1, 1, 1, 1, 1, 1, LINE_XOXO, LINE_XOXO );
             draw_custom_border( w_monster_info_border, 1, 1, 1, 1, LINE_XXXO, LINE_XOXX, 1, 1 );
 
-            mvwprintz( w_monsters_border, point( 2, 0 ), c_light_green, "<Tab> " );
+            mvwprintz( w_monsters_border, point( 2, 0 ), c_light_green, "R\u25CE\u2190 " );
             wprintz( w_monsters_border, c_white, _( "Monsters" ) );
 
             if( monster_list.empty() ) {

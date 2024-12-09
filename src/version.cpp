@@ -14,5 +14,6 @@
 
 const char *getVersionString()
 {
+	return "Custom-Experimental";
     return VERSION;
 }
