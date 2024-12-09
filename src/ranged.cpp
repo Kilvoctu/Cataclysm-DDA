@@ -3875,11 +3875,6 @@ void target_ui::draw_controls_list( int text_y )
     nc_color col_move = ( status != Status::OutOfAmmo ? col_enabled : col_disabled );
     nc_color col_fire = ( status == Status::Good ? col_enabled : col_disabled );
 
-    // Get first key bound to given action OR ' ' if there are none.
-    const auto bound_key = [this]( const std::string & s ) {
-        const std::vector<input_event> keys = this->ctxt.keys_bound_to( s, /*maximum_modifier_count=*/1 );
-        return keys.empty() ? input_event() : keys.front();
-    };
     const auto colored = [col_enabled]( nc_color color, const std::string & s ) {
         if( color == col_enabled ) {
             // col_enabled is the default one when printing

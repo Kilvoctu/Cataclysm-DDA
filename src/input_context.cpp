@@ -667,7 +667,7 @@ const
 // alternative hotkeys, which mustn't be included so that the hardcoded
 // hotkeys do not show up beside entries within the window.
 static const std::string display_help_hotkeys =
-    "0123456789abcdefghijkpqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ:;'\",/<>?!@#$%^&*()_[]\\{}|`~";
+    "defghijkpqrstuvwxyzabcABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:;'\",/<>?!@#$%^&*()_[]\\{}|`~";
 
 namespace
 {
