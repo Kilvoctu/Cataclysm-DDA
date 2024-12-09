@@ -6788,6 +6788,7 @@ static void zones_manager_shortcuts( const catacurses::window &w_info, faction_i
                                      bool show_all_zones )
 {
     werase( w_info );
+	show_all_zones = false;
 
     int tmpx = 1;
     tmpx += shortcut_print( w_info, point( tmpx, 1 ), c_white, c_light_green, _( "<X>-Add" ) ) + 2;
@@ -6807,8 +6808,7 @@ static void zones_manager_shortcuts( const catacurses::window &w_info, faction_i
     tmpx = 1;
     tmpx += shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green, 
 	                        _( "<R3>-Toggle Zone Display" ) ) + 2;
-	shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green,
-                    _( "<L3>-Show all" ) );
+	shortcut_print( w_info, point( tmpx, 4 ), c_white, c_light_green, _( "<L3>-Show all" ) );
 
     tmpx = 1;
     tmpx += shortcut_print( w_info, point( tmpx, 5 ), c_white, c_light_green,
@@ -6818,6 +6818,22 @@ static void zones_manager_shortcuts( const catacurses::window &w_info, faction_i
     if( debug_mode ) {
         shortcut_print( w_info, point( 1, 8 ), c_light_red, c_light_green,
                         string_format( _( "Shown <F>action: %s" ), faction.str() ) );
+	    // Don't know what this code does. Will hide it in here
+		std::string all_zones = _( "<S>how all" );
+        std::string distant_zones = _( "Hide distant" );
+		std::array<nc_color, 2> selection_color = { c_dark_gray, c_dark_gray };
+		selection_color[int( !show_all_zones )] = c_yellow;
+
+		nc_color current_color = selection_color[0];
+		tmpx += shortcut_print( w_info, point( tmpx, 9 ), current_color, c_light_green, all_zones );
+		current_color = c_white;
+		print_colored_text( w_info, point( tmpx, 9 ), current_color, current_color, " / " );
+		tmpx += 3;
+		current_color = selection_color[1];
+		print_colored_text( w_info, point( tmpx, 9 ), current_color, current_color, distant_zones );
+		tmpx += utf8_width( distant_zones ) + 2;
+
+		shortcut_print( w_info, point( tmpx, 9 ), c_white, c_light_green, _( "<M>ap" ) );
     }
 
     wnoutrefresh( w_info );

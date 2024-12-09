@@ -364,9 +364,14 @@ std::string input_context::get_desc(
     const translation &inline_fmt,
     const translation &separate_fmt ) const
 {
+	
     if( action_descriptor == "ANY_INPUT" ) {
         //~ keybinding description for anykey
         return string_format( separate_fmt, pgettext( "keybinding", "any" ), text );
+    }
+	
+	if( action_descriptor == "NO_INPUT" ) {
+        return string_format( inline_fmt, pgettext( "keybinding", "any" ), text );
     }
 
     const auto &events = inp_mngr.get_input_for_action( action_descriptor, category );
