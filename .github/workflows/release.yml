@@ -37,8 +37,13 @@ jobs:
       
       - name: Get Dependencies
         run: |
-          sudo apt install libsdl2-2.0
+          sudo apt install build-essential
+          sudo apt install sdl2
           sudo apt install libsdl2-image-dev
+          sudo apt install sdl2_ttf
+          sudo apt install sdl2_mixer
+          sudo apt install freetype2
+          sudo apt install gettext
 
       - name: Build
         run: |
