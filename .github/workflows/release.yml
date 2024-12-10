@@ -37,7 +37,8 @@ jobs:
       
       - name: Get Dependencies
         run: |
-          sudo apt install build-essential
+          sudo apt install libsdl2-2.0
+          sudo apt install libsdl2-image-dev
 
       - name: Build
         run: |
