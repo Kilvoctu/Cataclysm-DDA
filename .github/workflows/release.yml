@@ -14,45 +14,70 @@ on:
           type: string
 
 jobs:
-  aarch64_job:
-    runs-on: ubuntu-20.04
-    name: Build on ubuntu-22.04 aarch64
+  build_job:
+    runs-on: ubuntu-22.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+
+    strategy:
+      matrix:
+        include:
+          - arch: aarch64
+            distro: ubuntu22.04
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 1
       - uses: uraimo/run-on-arch-action@v2
-        name: Run commands
-        id: runcmd
+        name: Build artifact
+        id: build
         with:
-          arch: aarch64
-          distro: ubuntu20.04
+          arch: ${{ matrix.arch }}
+          distro: ${{ matrix.distro }}
+          githubToken: ${{ github.token }}
+
+          setup: |
+            mkdir -p "${PWD}/artifacts"
+          dockerRunArgs: |
+            --volume "${PWD}/artifacts:/artifacts"
+          env: | 
+            artifact_name: git-${{ matrix.distro }}_${{ matrix.arch }}
+          shell: /bin/sh
+
+          install: |
+            case "${{ matrix.distro }}" in
+              ubuntu*|jessie|stretch|buster|bullseye)
+                apt-get update -q -y
+                apt-get install -y git
+                apt-get install build-essential -y
+                apt-get install libsdl2-dev -y
+                apt-get install libncursesw5-dev -y
+                apt-get install libsdl2-ttf-dev -y
+                apt-get install libsdl2-image-dev -y
+                apt-get install libsdl2-mixer-dev -y
+                apt-get install libpulse-dev -y
+                apt-get install gettext -y
+                apt-get install parallel -y
+                apt-get install libfreetype6-dev -y
+                ;;
+              fedora*)
+                dnf -y update
+                dnf -y install git which
+                ;;
+              alpine*)
+                apk update
+                apk add git
+                ;;
+            esac
 
           run: |
-            uname -a
-            echo ::set-output name=uname::$(uname -a)
-      
-      - name: Get Dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install libsdl2-dev
-          git clone https://github.com/libsdl-org/SDL.git --branch release-2.0.20 --depth 1
-          cd SDL
-          mkdir build
-          cd build
-          ../configure
-          make -j$((`nproc`+0))
-          sudo make install
-          cp ../LICENSE.txt ${{ github.workspace }}/LICENSE-SDL.txt
-          sudo apt-get install libncursesw5-dev libsdl2-ttf-dev libsdl2-image-dev \
-            libsdl2-mixer-dev libpulse-dev ccache gettext parallel
-
-      - name: Build
-        run: |
-          echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
-          make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
-          strip cataclysm-tiles
+            gcc -v
+            git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
+            cd Cataclysm-DDA
+            make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
+            strip cataclysm-tiles
+            cp cataclysm-tiles "/artifacts/${artifact_name}"
+            echo "Produced artifact at /artifacts/${artifact_name}"
       
       - name: Release
         uses: ncipollo/release-action@v1
