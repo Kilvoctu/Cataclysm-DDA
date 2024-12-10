@@ -39,7 +39,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt install libsdl2-image-dev
-          sudo apt install sdl2_ttf
+          sudo apt install libsdl-ttf2.0-0
           sudo apt install sdl2_mixer
           sudo apt install gettext
 
