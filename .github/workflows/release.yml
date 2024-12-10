@@ -34,14 +34,14 @@ jobs:
           run: |
             uname -a
             echo ::set-output name=uname::$(uname -a)
-            git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
-            cd Cataclysm-DDA
-            make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
-            strip cataclysm-tiles
 
       - name: Get the output
         run: |
           echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
+          git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
+          cd Cataclysm-DDA
+          make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
+          strip cataclysm-tiles
       
       - name: Release
         uses: ncipollo/release-action@v1
