@@ -13,34 +13,36 @@ on:
           required: false
           type: string
 
+
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  aarch64_job:
+    # The host should always be Linux
+    runs-on: ubuntu-22.04
+    name: Build on ubuntu-22.04 aarch64
     steps:
-      - name: Checkout Branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 1
+      - uses: uraimo/run-on-arch-action@v2
+        name: Run commands
+        id: runcmd
+        with:
+          arch: aarch64
+          distro: ubuntu22.04
+
+          run: |
+            uname -a
+            echo ::set-output name=uname::$(uname -a)
+            git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
+            cd Cataclysm-DDA
+            make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
+            strip cataclysm-tiles
+
+      - name: Get the output
+        run: |
+          echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
       
-      - name: Install dependencies
-        run: |
-          sudo apt install docker-ce docker-ce-cli containerd.io
-          docker pull monkeyx/retro_builder:arm64
-          docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-          docker run --privileged -i --platform=linux/arm64 --name builder64 monkeyx/retro_builder:arm64 bash
-          git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
-          cd Cataclysm-DDA
-          sudo apt install gettext
-          uname -m
-
-      - name: Build
-        run: |
-          make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
-          strip cataclysm-tiles
-          exit
-          docker cp builder64:root/Cataclysm-DDA/cataclysm-tiles .
-
       - name: Release
         uses: ncipollo/release-action@v1
         with:
