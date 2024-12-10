@@ -34,8 +34,12 @@ jobs:
           run: |
             uname -a
             echo ::set-output name=uname::$(uname -a)
+      
+      - name: Get Dependencies
+        run: |
+          sudo apt install build-essential
 
-      - name: Get the output
+      - name: Build
         run: |
           echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
           git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
