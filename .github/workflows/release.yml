@@ -33,6 +33,7 @@ jobs:
           git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
           cd Cataclysm-DDA
           sudo apt install gettext
+          uname -m
 
       - name: Build
         run: |
