@@ -13,10 +13,8 @@ on:
           required: false
           type: string
 
-
 jobs:
   aarch64_job:
-    # The host should always be Linux
     runs-on: ubuntu-22.04
     name: Build on ubuntu-22.04 aarch64
     steps:
@@ -53,8 +51,6 @@ jobs:
       - name: Build
         run: |
           echo "The uname output was ${{ steps.runcmd.outputs.uname }}"
-          git clone --depth 1 --branch Tu-c https://github.com/Kilvoctu/Cataclysm-DDA.git
-          cd Cataclysm-DDA
           make -j$((`nproc`+0)) TILES=1 SOUND=1 RELEASE=1 LOCALIZE=1 LANGUAGES=all
           strip cataclysm-tiles
       
