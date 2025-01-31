@@ -14,7 +14,6 @@ on:
       - 'src/*.cpp'
       - '**.json'
 
-
 permissions:
   contents: read
 
