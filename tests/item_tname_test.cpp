@@ -18,8 +18,6 @@
 #include "options_helpers.h"
 #include "pocket_type.h"
 #include "ret_val.h"
-#include "translation_manager.h"
-#include "translations.h"
 #include "type_id.h"
 #include "value_ptr.h"
 
